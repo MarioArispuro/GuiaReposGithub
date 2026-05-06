@@ -1,6 +1,6 @@
 # 💬 Chat TCP/UDP en Java
 
-> Práctica 4 · Redes de Computadoras · ITSON
+> Proyecto Final · Redes  · ITSON
 
 Aplicación de chat cliente-servidor desarrollada en Java que permite comunicación en tiempo real mediante sockets TCP y UDP, con soporte para mensajes grupales y privados entre múltiples clientes.
 
