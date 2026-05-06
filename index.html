@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@400;500;600;700&display=swap');
+
+:root {
+  --gh-dark: #0d1117;
+  --gh-card: #161b22;
+  --gh-border: #30363d;
+  --gh-green: #238636;
+  --gh-green-light: #2ea043;
+  --gh-blue: #1f6feb;
+  --gh-text: #e6edf3;
+  --gh-muted: #7d8590;
+  --gh-accent: #f78166;
+  --step-done: #238636;
+  --step-active: #1f6feb;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Sora', sans-serif;
+  background: var(--gh-dark);
+  color: var(--gh-text);
+  min-height: 100vh;
+  padding: 0 0 40px;
+}
+
+/* ─── Header ─── */
+.header {
+  background: var(--gh-card);
+  border-bottom: 1px solid var(--gh-border);
+  padding: 20px 28px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.gh-logo { width: 34px; height: 34px; fill: var(--gh-text); flex-shrink: 0; }
+.header-text h1 { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+.header-text p  { font-size: 12px; color: var(--gh-muted); margin-top: 2px; }
+.badge {
+  margin-left: auto;
+  background: var(--gh-green);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ─── Progress bar ─── */
+.progress-wrap {
+  padding: 18px 28px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.progress-track {
+  flex: 1;
+  height: 6px;
+  background: var(--gh-border);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gh-green), var(--gh-blue));
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+.progress-label { font-size: 12px; color: var(--gh-muted); white-space: nowrap; font-family: 'JetBrains Mono', monospace; }
+
+/* ─── Steps nav (pills) ─── */
+.steps-nav {
+  display: flex;
+  gap: 6px;
+  padding: 16px 28px 0;
+  flex-wrap: wrap;
+}
+.step-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--gh-border);
+  background: transparent;
+  color: var(--gh-muted);
+  transition: all 0.2s;
+  font-family: 'Sora', sans-serif;
+}
+.step-pill:hover { border-color: var(--gh-blue); color: var(--gh-text); }
+.step-pill.active { background: var(--gh-blue); border-color: var(--gh-blue); color: #fff; }
+.step-pill.done { border-color: var(--gh-green); color: #3fb950; }
+.step-num {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700;
+  background: var(--gh-border);
+  transition: all 0.2s;
+}
+.step-pill.active .step-num { background: rgba(255,255,255,0.2); }
+.step-pill.done .step-num { background: var(--gh-green); color: #fff; }
+
+/* ─── Main card ─── */
+.step-card {
+  margin: 16px 28px 0;
+  background: var(--gh-card);
+  border: 1px solid var(--gh-border);
+  border-radius: 12px;
+  overflow: hidden;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+.card-header {
+  padding: 18px 22px 16px;
+  border-bottom: 1px solid var(--gh-border);
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.step-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+  background: rgba(31,111,235,0.15);
+  border: 1px solid rgba(31,111,235,0.3);
+}
+.card-header h2 { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
+.card-header p  { font-size: 13px; color: var(--gh-muted); line-height: 1.5; }
+
+.card-body { padding: 20px 22px; }
+
+/* ─── Substeps ─── */
+.substep {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--gh-border);
+}
+.substep:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+.substep-num {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--gh-blue);
+  color: #fff;
+  font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.substep-content h3 { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+.substep-content p  { font-size: 13px; color: var(--gh-muted); line-height: 1.6; margin-bottom: 8px; }
+
+/* ─── Code blocks ─── */
+.code-block {
+  background: var(--gh-dark);
+  border: 1px solid var(--gh-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  line-height: 1.8;
+  position: relative;
+  margin-top: 8px;
+}
+.code-block .comment { color: var(--gh-muted); }
+.code-block .cmd     { color: #79c0ff; }
+.code-block .str     { color: #a5d6ff; }
+.code-block .flag    { color: #ffa657; }
+.code-line { display: flex; align-items: flex-start; gap: 8px; }
+.prompt { color: var(--gh-green); user-select: none; flex-shrink: 0; }
+
+.copy-btn {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: var(--gh-border);
+  border: none;
+  color: var(--gh-muted);
+  font-family: 'Sora', sans-serif;
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.copy-btn:hover { background: var(--gh-blue); color: #fff; }
+
+/* ─── Tips ─── */
+.tip {
+  display: flex;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  margin-top: 10px;
+}
+.tip.info    { background: rgba(31,111,235,0.1);  border: 1px solid rgba(31,111,235,0.3); }
+.tip.warning { background: rgba(210,153,34,0.1);  border: 1px solid rgba(210,153,34,0.3); }
+.tip.success { background: rgba(35,134,54,0.1);   border: 1px solid rgba(35,134,54,0.3); }
+.tip.danger  { background: rgba(247,129,102,0.1); border: 1px solid rgba(247,129,102,0.3); }
+.tip-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.tip p { color: var(--gh-text); }
+.tip strong { color: #fff; }
+
+/* ─── Screenshot mockup ─── */
+.mockup {
+  background: var(--gh-dark);
+  border: 1px solid var(--gh-border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+.mockup-bar {
+  background: #21262d;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--gh-border);
+}
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot.r { background: #f85149; }
+.dot.y { background: #d29922; }
+.dot.g { background: #3fb950; }
+.url-bar {
+  flex: 1;
+  background: var(--gh-dark);
+  border: 1px solid var(--gh-border);
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 11px;
+  color: var(--gh-muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+.mockup-body { padding: 14px 16px; font-size: 12px; }
+
+/* ─── Checklist ─── */
+.checklist { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.checklist li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  padding: 10px 14px;
+  background: var(--gh-dark);
+  border: 1px solid var(--gh-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  user-select: none;
+}
+.checklist li:hover { border-color: var(--gh-blue); }
+.checklist li.checked { border-color: var(--gh-green); color: #3fb950; }
+.check-box {
+  width: 18px; height: 18px;
+  border: 1.5px solid var(--gh-border);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.checklist li.checked .check-box { background: var(--gh-green); border-color: var(--gh-green); color: #fff; }
+
+/* ─── Nav buttons ─── */
+.nav-btns {
+  display: flex;
+  gap: 10px;
+  padding: 16px 28px 0;
+}
+.btn {
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: 'Sora', sans-serif;
+  transition: all 0.2s;
+  display: flex; align-items: center; gap: 6px;
+}
+.btn-secondary { background: #21262d; color: var(--gh-text); border: 1px solid var(--gh-border); }
+.btn-secondary:hover { border-color: var(--gh-blue); }
+.btn-primary { background: var(--gh-green-light); color: #fff; }
+.btn-primary:hover { background: var(--gh-green); }
+.btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* ─── Final card ─── */
+.final-card {
+  text-align: center;
+  padding: 32px 24px;
+}
+.final-card .big-emoji { font-size: 48px; margin-bottom: 14px; }
+.final-card h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+.final-card p  { font-size: 14px; color: var(--gh-muted); line-height: 1.6; max-width: 420px; margin: 0 auto 20px; }
+.repo-url {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--gh-dark);
+  border: 1px solid var(--gh-green);
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: #3fb950;
+}
+</style>
+
+<div class="header">
+  <svg class="gh-logo" viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"/>
+  </svg>
+  <div class="header-text">
+    <h1>Guía: Sube tu proyecto a GitHub</h1>
+    <p>Proyecto Final · Chat TCP/UDP · Redes · ITSON</p>
+  </div>
+  <span class="badge">v1.0</span>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:12%"></div></div>
+  <span class="progress-label" id="progress-label">Paso 1 / 8</span>
+</div>
+
+<div class="steps-nav" id="steps-nav"></div>
+
+<div id="step-container"></div>
+
+<div class="nav-btns">
+  <button class="btn btn-secondary" id="btn-prev" onclick="navigate(-1)">← Anterior</button>
+  <button class="btn btn-primary"   id="btn-next" onclick="navigate(1)">Siguiente →</button>
+</div>
+
+<script>
+const steps = [
+  {
+    icon: '🔑',
+    title: 'Crear cuenta en GitHub',
+    subtitle: 'Solo se hace una vez. Guarda bien tu usuario y contraseña.',
+    substeps: [
+      {
+        n: 1, title: 'Ve a github.com',
+        body: 'Abre tu navegador y visita <strong style="color:#79c0ff">github.com</strong>. Haz clic en el botón verde <strong>"Sign up"</strong>.',
+        tip: { type: 'info', icon: 'ℹ️', text: 'Usa tu correo institucional de ITSON (<strong>@potros.itson.edu.mx</strong>). Puedes tener una cuenta gratuita con repositorios privados y públicos ilimitados.' }
+      },
+      {
+        n: 2, title: 'Llena el formulario',
+        body: 'Ingresa tu email, elige un nombre de usuario (ej: <code style="color:#ffa657">luis-redes-itson</code>) y una contraseña segura. Completa el captcha.',
+        tip: { type: 'warning', icon: '⚠️', text: '<strong>Tu nombre de usuario será público.</strong> Elige algo profesional, sin caracteres especiales raros.' }
+      },
+      {
+        n: 3, title: 'Verifica tu email',
+        body: 'GitHub te enviará un correo de confirmación. Ábrelo y haz clic en el enlace de verificación antes de continuar.',
+        tip: { type: 'success', icon: '✅', text: '¡Listo! Ya tienes tu cuenta. Ahora ambos integrantes del equipo deben tener su cuenta antes de continuar.' }
+      }
+    ]
+  },
+  {
+    icon: '📁',
+    title: 'Instalar Git en tu computadora',
+    subtitle: 'Git es la herramienta que conecta tu código local con GitHub.',
+    substeps: [
+      {
+        n: 1, title: 'Descarga Git',
+        body: 'Ve a <strong style="color:#79c0ff">git-scm.com</strong> y descarga el instalador para Windows/Mac/Linux. Ejecuta el instalador con las opciones predeterminadas.',
+        tip: { type: 'info', icon: '💡', text: 'En Windows elige <strong>"Git Bash"</strong> durante la instalación. Es la terminal que usarás para los comandos.' }
+      },
+      {
+        n: 2, title: 'Configura tu identidad',
+        body: 'Abre <strong>Git Bash</strong> (Windows) o <strong>Terminal</strong> (Mac/Linux) y ejecuta estos dos comandos con tus datos reales:',
+        code: [
+          { prompt: '$', cmd: 'git config --global user.name', str: '"Tu Nombre Aquí"' },
+          { prompt: '$', cmd: 'git config --global user.email', str: '"tucorreo@potros.itson.edu.mx"' }
+        ],
+        tip: { type: 'warning', icon: '⚠️', text: 'El email debe ser el mismo que registraste en GitHub. Esto identifica quién hizo cada cambio en el código.' }
+      },
+      {
+        n: 3, title: 'Verifica la instalación',
+        body: 'Ejecuta este comando. Si ves un número de versión (ej: <code style="color:#3fb950">git version 2.43.0</code>), Git está instalado correctamente.',
+        code: [
+          { prompt: '$', cmd: 'git', flag: '--version' }
+        ]
+      }
+    ]
+  },
+  {
+    icon: '🏗️',
+    title: 'Crear el repositorio en GitHub',
+    subtitle: 'El repositorio es la "carpeta" de tu proyecto en la nube.',
+    substeps: [
+      {
+        n: 1, title: 'Crea un nuevo repositorio',
+        body: 'En GitHub, haz clic en el botón <strong>"+"</strong> (esquina superior derecha) → <strong>"New repository"</strong>.',
+        mockup: true
+      },
+      {
+        n: 2, title: 'Configura el repositorio',
+        body: 'Llena los campos así:',
+        list: [
+          '📝 <strong>Repository name:</strong> chat-tcp-udp-java',
+          '📄 <strong>Description:</strong> Práctica 4 - Chat TCP/UDP en Java',
+          '🔓 <strong>Visibility:</strong> Public (requerido por la rúbrica)',
+          '✅ <strong>Add a README file:</strong> marca esta casilla',
+          '🚫 <strong>Add .gitignore:</strong> elige "Java" de la lista'
+        ],
+        tip: { type: 'danger', icon: '🔴', text: '<strong>Visibility debe ser Public.</strong> Un repositorio privado no puede ser evaluado por el maestro.' }
+      },
+      {
+        n: 3, title: 'Copia la URL del repositorio',
+        body: 'Una vez creado, haz clic en el botón verde <strong>"&lt;&gt; Code"</strong> y copia la URL HTTPS. La necesitarás en el siguiente paso.',
+        tip: { type: 'info', icon: '📋', text: 'La URL tiene este formato: <code style="color:#79c0ff">https://github.com/tu-usuario/chat-tcp-udp-java.git</code>' }
+      }
+    ]
+  },
+  {
+    icon: '🖱️',
+    title: 'Método GUI: Subir desde GitHub.com',
+    subtitle: 'Sin comandos. Crea el repositorio y sube tus archivos directamente desde el navegador.',
+    substeps: [
+      {
+        n: 1, title: 'Crear el repositorio desde github.com',
+        body: 'Inicia sesión en <strong style="color:#79c0ff">github.com</strong>. Haz clic en <strong>"+"</strong> (esquina superior derecha) → <strong>"New repository"</strong>. Llena los campos (nombre, Public, README, .gitignore Java) y presiona <strong>"Create repository"</strong>.',
+        tip: { type: 'info', icon: '💡', text: 'Asegúrate de marcar <strong>"Add a README file"</strong> y seleccionar <strong>".gitignore: Java"</strong>. Esto crea el repositorio listo para recibir archivos.' }
+      },
+      {
+        n: 2, title: 'Abrir el cargador de archivos',
+        body: 'En la página principal de tu repositorio recién creado, haz clic en el botón <strong>"Add file"</strong> (junto al botón verde "Code") y selecciona <strong>"Upload files"</strong>.',
+        mockup: true,
+        tip: { type: 'warning', icon: '⚠️', text: 'Solo sube archivos <strong>.java</strong> y recursos del proyecto. <strong>No</strong> subas carpetas <code>/bin</code>, <code>/out</code> ni <code>/target</code> (archivos compilados).' }
+      },
+      {
+        n: 3, title: 'Arrastrar y soltar tus archivos',
+        body: 'Arrastra tus archivos y carpetas desde el explorador de tu computadora al área de subida en GitHub, o usa el botón <strong>"choose your files"</strong>. Puedes subir múltiples archivos y carpetas a la vez.',
+        tip: { type: 'info', icon: '📂', text: 'GitHub permite subir carpetas completas arrastrándolas. Si tu proyecto tiene subcarpetas como <code>src/</code> o <code>resources/</code>, arrástralas directamente al área de carga.' }
+      },
+      {
+        n: 4, title: 'Hacer commit desde la interfaz',
+        body: 'Al final de la página, en la sección <strong>"Commit changes"</strong>, escribe un mensaje descriptivo (ej: <em>"feat: estructura inicial del proyecto"</em>). Deja seleccionada <strong>"Commit directly to the main branch"</strong> y haz clic en <strong>"Commit changes"</strong>.',
+        tip: { type: 'success', icon: '✅', text: '¡Listo! Tus archivos ya están en GitHub. Repite los pasos 2–4 cada vez que quieras subir más archivos o actualizaciones.' }
+      },
+      {
+        n: 5, title: 'Verificar que los archivos subieron correctamente',
+        body: 'Regresa a la página principal del repositorio. Deberías ver todos tus archivos listados. Haz clic en cualquiera para confirmar que el contenido es correcto.',
+        tip: { type: 'warning', icon: '⚠️', text: 'Este método es práctico para pocos cambios, pero <strong>se recomienda usar Git por terminal</strong> para el flujo diario, ya que es mucho más rápido y mantiene un historial más limpio.' }
+      }
+    ]
+  },
+  {
+    icon: '🔗',
+    title: 'Conectar tu proyecto local con GitHub',
+    subtitle: 'Estos comandos se ejecutan una sola vez por proyecto.',
+    substeps: [
+      {
+        n: 1, title: 'Abre la terminal en tu proyecto',
+        body: 'Abre Git Bash (o Terminal) y navega a la carpeta raíz de tu proyecto Java. Reemplaza la ruta con la tuya:',
+        code: [
+          { prompt: '$', cmd: 'cd', str: 'C:/Users/TuNombre/Documentos/ChatTCPUDP' },
+          { comment: '# En Mac/Linux sería algo así:' },
+          { prompt: '$', cmd: 'cd', str: '~/Documentos/ChatTCPUDP' }
+        ]
+      },
+      {
+        n: 2, title: 'Inicializa Git en tu carpeta',
+        body: 'Este comando convierte tu carpeta en un repositorio Git local:',
+        code: [
+          { prompt: '$', cmd: 'git init' },
+          { comment: '# Deberías ver: Initialized empty Git repository in...' }
+        ]
+      },
+      {
+        n: 3, title: 'Conecta con GitHub',
+        body: 'Pega la URL que copiaste de GitHub (con tu usuario real):',
+        code: [
+          { prompt: '$', cmd: 'git remote add origin', str: 'https://github.com/tu-usuario/chat-tcp-udp-java.git' },
+          { comment: '# Verifica que quedó bien:' },
+          { prompt: '$', cmd: 'git remote', flag: '-v' }
+        ],
+        tip: { type: 'info', icon: '💡', text: 'Si cometiste un error en la URL, usa: <code style="color:#ffa657">git remote set-url origin &lt;nueva-url&gt;</code>' }
+      }
+    ]
+  },
+  {
+    icon: '📤',
+    title: 'Hacer tu primer commit y push',
+    subtitle: 'Commit = guardar cambios. Push = subir a GitHub.',
+    substeps: [
+      {
+        n: 1, title: 'Agrega todos los archivos',
+        body: 'El punto (.) significa "todos los archivos de esta carpeta". El .gitignore de Java ya excluirá automáticamente los archivos compilados (.class):',
+        code: [
+          { prompt: '$', cmd: 'git add .' },
+          { comment: '# Verifica qué archivos se agregarán:' },
+          { prompt: '$', cmd: 'git status' }
+        ],
+        tip: { type: 'warning', icon: '⚠️', text: '<strong>Nunca subas las carpetas /bin, /out o /target.</strong> Solo sube código fuente (.java) y el README. El .gitignore de Java lo maneja automáticamente.' }
+      },
+      {
+        n: 2, title: 'Crea el commit',
+        body: 'El mensaje del commit describe qué hiciste. Sé descriptivo:',
+        code: [
+          { comment: '# Primer commit:' },
+          { prompt: '$', cmd: 'git commit', flag: '-m', str: '"feat: estructura inicial del proyecto chat TCP/UDP"' },
+          { comment: '# Otros ejemplos de mensajes:' },
+          { comment: '# "feat: registro de usuario con validación"' },
+          { comment: '# "fix: corrección en desconexión de clientes"' },
+          { comment: '# "docs: actualización del README"' }
+        ]
+      },
+      {
+        n: 3, title: 'Sube al repositorio (push)',
+        body: 'Este comando sube tus cambios a GitHub. La primera vez se llama así:',
+        code: [
+          { prompt: '$', cmd: 'git push', flag: '-u origin main' },
+          { comment: '# Si el branch se llama "master":' },
+          { prompt: '$', cmd: 'git push', flag: '-u origin master' }
+        ],
+        tip: { type: 'info', icon: '🔐', text: 'GitHub pedirá tu usuario y contraseña la primera vez. Si falla, configura un <strong>Personal Access Token</strong> en Settings → Developer settings → Tokens.' }
+      }
+    ]
+  },
+  {
+    icon: '📝',
+    title: 'Crear un buen README',
+    subtitle: 'El README es lo primero que ve el maestro. Hazlo claro y completo.',
+    substeps: [
+      {
+        n: 1, title: 'Estructura mínima requerida',
+        body: 'Tu README.md debe tener estas secciones. Edítalo directamente en GitHub o en tu editor favorito:',
+        code: [
+          { comment: '# Chat TCP/UDP en Java' },
+          { comment: '' },
+          { comment: '## 📋 Descripción' },
+          { comment: 'Aplicación de chat cliente-servidor desarrollada en Java...' },
+          { comment: '' },
+          { comment: '## 👥 Integrantes' },
+          { comment: '- Ana López' },
+          { comment: '- Luis García' },
+          { comment: '' },
+          { comment: '## 🛠️ Tecnologías' },
+          { comment: '- Java 17+ · TCP/UDP Sockets · Multihilos' },
+          { comment: '' },
+          { comment: '## 🚀 Cómo ejecutar' },
+          { comment: '1. Compilar: javac -d bin src/**/*.java' },
+          { comment: '2. Servidor: java -cp bin servidor.ServidorMain' },
+          { comment: '3. Cliente: java -cp bin cliente.ClienteMain' },
+          { comment: '' },
+          { comment: '## 📸 Capturas de pantalla' },
+          { comment: '![Chat en acción](screenshots/chat.png)' }
+        ]
+      },
+      {
+        n: 2, title: 'Agregar capturas de pantalla',
+        body: 'Crea una carpeta <code style="color:#ffa657">screenshots/</code> en tu proyecto. Guarda imágenes del chat funcionando y referencíalas en el README.',
+        tip: { type: 'success', icon: '📸', text: 'Incluye capturas de: <strong>inicio del servidor, registro de usuario, chat grupal y mensaje privado.</strong> Suman puntos en la rúbrica.' }
+      },
+      {
+        n: 3, title: 'Subir los cambios del README',
+        body: 'Después de editar el README, haz commit y push como siempre:',
+        code: [
+          { prompt: '$', cmd: 'git add README.md screenshots/' },
+          { prompt: '$', cmd: 'git commit', flag: '-m', str: '"docs: README con capturas y guía de ejecución"' },
+          { prompt: '$', cmd: 'git push' }
+        ]
+      }
+    ]
+  },
+  {
+    icon: '🔄',
+    title: 'Flujo de trabajo semanal',
+    subtitle: 'Cada vez que avances en el proyecto, repite estos pasos.',
+    checklist: [
+      'Modifiqué o agregué archivos .java',
+      'Ejecuté git add . para preparar los cambios',
+      'Hice commit con un mensaje descriptivo',
+      'Hice push para subir todo a GitHub',
+      'Verifiqué en github.com que los cambios aparecen',
+    ],
+    substeps: [
+      {
+        n: 1, title: 'El ciclo básico (repítelo siempre)',
+        body: 'Estos 3 comandos son todo lo que necesitas en el día a día:',
+        code: [
+          { comment: '# 1. Ver qué cambió' },
+          { prompt: '$', cmd: 'git status' },
+          { comment: '# 2. Preparar cambios' },
+          { prompt: '$', cmd: 'git add .' },
+          { comment: '# 3. Guardar + subir' },
+          { prompt: '$', cmd: 'git commit', flag: '-m', str: '"feat: implementé mensajería privada"' },
+          { prompt: '$', cmd: 'git push' }
+        ],
+        tip: { type: 'success', icon: '📊', text: 'La rúbrica evalúa el <strong>historial de commits</strong>. Haz commits frecuentes con mensajes claros. Un solo commit con todo el proyecto al final = puntos menos.' }
+      },
+      {
+        n: 2, title: 'Si trabajas con tu pareja (colaborador)',
+        body: 'Para agregar a tu compañero: en GitHub ve a <strong>Settings → Collaborators → Add people</strong> y busca su usuario. Él aceptará la invitación por email.',
+        code: [
+          { comment: '# Tu pareja debe clonar el repo:' },
+          { prompt: '$', cmd: 'git clone', str: 'https://github.com/tu-usuario/chat-tcp-udp-java.git' },
+          { comment: '# Antes de trabajar, siempre sincronizar:' },
+          { prompt: '$', cmd: 'git pull' }
+        ],
+        tip: { type: 'warning', icon: '⚠️', text: 'Siempre haz <code>git pull</code> antes de empezar a trabajar para traer los cambios de tu pareja y evitar conflictos.' }
+      }
+    ]
+  }
+];
+
+let current = 0;
+const checked = {};
+
+function renderNav() {
+  const nav = document.getElementById('steps-nav');
+  nav.innerHTML = steps.map((s, i) => `
+    <button class="step-pill ${i < current ? 'done' : ''} ${i === current ? 'active' : ''}" onclick="goTo(${i})">
+      <span class="step-num">${i < current ? '✓' : i + 1}</span>
+      ${s.icon} ${s.title.split(' ').slice(0,2).join(' ')}
+    </button>
+  `).join('');
+}
+
+function renderProgress() {
+  const pct = Math.round(((current + 1) / steps.length) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = `Paso ${current + 1} / ${steps.length}`;
+}
+
+function renderCode(lines) {
+  if (!lines) return '';
+  return `<div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+    ${lines.map(l => {
+      if (l.comment !== undefined) return `<div class="code-line"><span class="comment">${l.comment}</span></div>`;
+      return `<div class="code-line"><span class="prompt">${l.prompt}</span><span class="cmd"> ${l.cmd||''}</span><span class="flag"> ${l.flag||''}</span><span class="str"> ${l.str||''}</span></div>`;
+    }).join('')}
+  </div>`;
+}
+
+function renderStep() {
+  const s = steps[current];
+  const container = document.getElementById('step-container');
+
+  if (current === steps.length - 1 && s.checklist) {
+    const checkItems = s.checklist.map((item, i) => `
+      <li id="chk-${i}" class="${checked[i] ? 'checked' : ''}" onclick="toggleCheck(${i})">
+        <span class="check-box">${checked[i] ? '✓' : ''}</span>
+        ${item}
+      </li>
+    `).join('');
+
+    const substepsHtml = s.substeps.map(sub => `
+      <div class="substep">
+        <div class="substep-num">${sub.n}</div>
+        <div class="substep-content">
+          <h3>${sub.title}</h3>
+          <p>${sub.body}</p>
+          ${sub.code ? renderCode(sub.code) : ''}
+          ${sub.tip ? `<div class="tip ${sub.tip.type}"><span class="tip-icon">${sub.tip.icon}</span><p>${sub.tip.text}</p></div>` : ''}
+        </div>
+      </div>
+    `).join('');
+
+    container.innerHTML = `<div class="step-card">
+      <div class="card-header">
+        <div class="step-icon">${s.icon}</div>
+        <div><h2>${s.title}</h2><p>${s.subtitle}</p></div>
+      </div>
+      <div class="card-body">
+        <p style="font-size:13px;color:var(--gh-muted);margin-bottom:12px">✅ Marca cada tarea cuando la completes:</p>
+        <ul class="checklist">${checkItems}</ul>
+        <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--gh-border)">
+          ${substepsHtml}
+        </div>
+        <div style="margin-top:20px;text-align:center;padding:24px;background:rgba(35,134,54,0.08);border:1px solid rgba(35,134,54,0.3);border-radius:10px">
+          <div style="font-size:36px;margin-bottom:8px">🎉</div>
+          <div style="font-size:15px;font-weight:700;margin-bottom:4px">¡Proyecto listo en GitHub!</div>
+          <div style="font-size:13px;color:var(--gh-muted);margin-bottom:12px">Envía el enlace junto con tu proyecto por correo al maestro.</div>
+          <div class="repo-url">github.com / tu-usuario / chat-tcp-udp-java</div>
+        </div>
+      </div>
+    </div>`;
+    return;
+  }
+
+  const substepsHtml = s.substeps.map(sub => `
+    <div class="substep">
+      <div class="substep-num">${sub.n}</div>
+      <div class="substep-content">
+        <h3>${sub.title}</h3>
+        <p>${sub.body}</p>
+        ${sub.list ? `<ul style="list-style:none;margin:8px 0;display:flex;flex-direction:column;gap:6px">${sub.list.map(li => `<li style="font-size:13px;padding:6px 12px;background:var(--gh-dark);border:1px solid var(--gh-border);border-radius:6px">${li}</li>`).join('')}</ul>` : ''}
+        ${sub.mockup ? `<div class="mockup"><div class="mockup-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="url-bar">github.com/new</span></div><div class="mockup-body" style="color:var(--gh-muted)"><div style="display:flex;flex-direction:column;gap:6px"><div style="background:#21262d;border:1px solid var(--gh-border);border-radius:6px;padding:8px 10px;font-family:JetBrains Mono,monospace;font-size:12px"><span style="color:#3fb950">Owner</span> / <span style="color:#79c0ff">chat-tcp-udp-java</span></div><div style="font-size:12px">☑️ Public &nbsp;&nbsp; ☑️ Add README &nbsp;&nbsp; ☑️ .gitignore: Java</div><div style="background:var(--gh-green-light);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;display:inline-block;margin-top:4px">Create repository</div></div></div></div>` : ''}
+        ${sub.code ? renderCode(sub.code) : ''}
+        ${sub.tip ? `<div class="tip ${sub.tip.type}"><span class="tip-icon">${sub.tip.icon}</span><p>${sub.tip.text}</p></div>` : ''}
+      </div>
+    </div>
+  `).join('');
+
+  container.innerHTML = `<div class="step-card">
+    <div class="card-header">
+      <div class="step-icon">${s.icon}</div>
+      <div><h2>${s.title}</h2><p>${s.subtitle}</p></div>
+    </div>
+    <div class="card-body">${substepsHtml}</div>
+  </div>`;
+}
+
+function toggleCheck(i) {
+  checked[i] = !checked[i];
+  renderStep();
+}
+
+function navigate(dir) {
+  current = Math.max(0, Math.min(steps.length - 1, current + dir));
+  update();
+}
+
+function goTo(i) {
+  current = i;
+  update();
+}
+
+function update() {
+  renderNav();
+  renderProgress();
+  renderStep();
+  document.getElementById('btn-prev').disabled = current === 0;
+  document.getElementById('btn-next').disabled = current === steps.length - 1;
+  document.getElementById('step-container').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function copyCode(btn) {
+  const block = btn.parentElement;
+  const text = [...block.querySelectorAll('.code-line, .comment')].map(l => l.textContent.trim()).filter(Boolean).join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '¡Copiado!';
+    btn.style.background = 'var(--gh-green)';
+    btn.style.color = '#fff';
+    setTimeout(() => { btn.textContent = 'Copiar'; btn.style.background = ''; btn.style.color = ''; }, 1500);
+  });
+}
+
+update();
+</script>
