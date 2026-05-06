@@ -136,4 +136,4 @@ TIPO|ORIGEN|DESTINO|CONTENIDO
 
 ## 📄 Licencia
 
-Proyecto académico — ITSON · Redes de Computadoras · 2025
+Proyecto académico — ITSON · Redes · 2026
